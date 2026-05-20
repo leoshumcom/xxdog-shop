@@ -1,0 +1,25 @@
+---
+import Main from '../layouts/Main.astro'
+import { API_BASE } from '../lib/config'
+
+const { slug } = Astro.params
+let page: any = { title: slug || 'Page', content: '' }
+
+if (slug) {
+  try {
+    const res = await fetch(`${API_BASE}/pages/${slug}`)
+    if (res.ok) page = await res.json()
+  } catch (e) {}
+}
+---
+<Main title={page.title} description={page.title}>
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-8">{page.title}</h1>
+    <div class="prose prose-gray max-w-none">
+      {page.content?.split('\n\n').map(p => {
+        if (p.startsWith('## ')) return <h2 class="text-2xl font-display font-bold text-gray-900 mt-8 mb-4">{p.replace('## ', '')}</h2>
+        return <p class="mb-4 leading-relaxed">{p}</p>
+      }) || <p>Content coming soon.</p>}
+    </div>
+  </div>
+</Main>

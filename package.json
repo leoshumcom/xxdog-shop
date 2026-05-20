@@ -1,0 +1,17 @@
+{
+  "name": "xxdog-shop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "xxdog.com - Fashion E-commerce on Cloudflare",
+  "scripts": {
+    "dev:api": "cd packages/api && npm run dev",
+    "dev:frontend": "cd packages/frontend && npm run dev",
+    "build": "cd packages/frontend && npm run build",
+    "deploy": "cd packages/api && npm run deploy && cd ../frontend && npm run deploy",
+    "db:init": "wrangler d1 execute xxdog-db --file=./schema.sql",
+    "db:seed": "wrangler d1 execute xxdog-db --file=./seed.sql"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

@@ -1,0 +1,182 @@
+---
+import { SITE } from '../lib/config'
+export interface Props {
+  title?: string
+  description?: string
+  image?: string
+  noindex?: boolean
+}
+const { title, description, image, noindex } = Astro.props
+const pageTitle = title ? `${title} | ${SITE.name}` : `${SITE.name} - ${SITE.tagline}`
+const pageDesc = description || SITE.description
+const pageImage = image || `${SITE.url}/og-image.jpg`
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={pageDesc} />
+  {noindex && <meta name="robots" content="noindex,nofollow" />}
+  
+  <!-- Canonical -->
+  <link rel="canonical" href={Astro.url.href} />
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content={pageTitle} />
+  <meta property="og:description" content={pageDesc} />
+  <meta property="og:image" content={pageImage} />
+  <meta property="og:url" content={Astro.url.href} />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={SITE.name} />
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={pageTitle} />
+  <meta name="twitter:description" content={pageDesc} />
+  <meta name="twitter:image" content={pageImage} />
+  
+  <title>{pageTitle}</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- Schema.org -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": SITE.name,
+    "url": SITE.url,
+    "description": SITE.description,
+    "email": SITE.email,
+    "currenciesAccepted": SITE.currency,
+    "paymentAccepted": ["PayPal", "Stripe"],
+    "priceRange": "$10-$200"
+  })}></script>
+  
+  <style>
+    /* Tailwind will handle this */
+  </style>
+</head>
+<body class="font-sans text-gray-900 bg-white antialiased">
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <a href="/" class="font-display text-2xl font-bold tracking-tight">
+          <span class="text-brand-600">XX</span><span>DOG</span>
+        </a>
+        
+        <!-- Nav -->
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="/category/shoes" class="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">Shoes</a>
+          <a href="/category/hats-caps" class="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">Hats</a>
+          <a href="/category/clothing" class="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">Clothing</a>
+          <a href="/category/accessories" class="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">Accessories</a>
+          <a href="/blog" class="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">Blog</a>
+        </nav>
+        
+        <!-- Actions -->
+        <div class="flex items-center gap-4">
+          <button id="search-btn" class="p-2 text-gray-600 hover:text-brand-600 transition-colors" aria-label="Search">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </button>
+          <a href="/cart" class="p-2 text-gray-600 hover:text-brand-600 transition-colors relative" aria-label="Cart">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            <span id="cart-count" class="absolute -top-0.5 -right-0.5 bg-brand-600 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center hidden">0</span>
+          </a>
+          <!-- Mobile menu button -->
+          <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-600" aria-label="Menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile Nav -->
+    <div id="mobile-menu" class="md:hidden hidden border-t border-gray-100 bg-white">
+      <div class="px-4 py-3 space-y-2">
+        <a href="/category/shoes" class="block py-2 text-sm font-medium text-gray-700">Shoes</a>
+        <a href="/category/hats-caps" class="block py-2 text-sm font-medium text-gray-700">Hats</a>
+        <a href="/category/clothing" class="block py-2 text-sm font-medium text-gray-700">Clothing</a>
+        <a href="/category/accessories" class="block py-2 text-sm font-medium text-gray-700">Accessories</a>
+        <a href="/blog" class="block py-2 text-sm font-medium text-gray-700">Blog</a>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Main Content -->
+  <main>
+    <slot />
+  </main>
+  
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <a href="/" class="font-display text-xl font-bold text-white">XXDOG</a>
+          <p class="mt-2 text-sm text-gray-400">Your premium destination for fashion-forward shoes, hats, clothing and accessories.</p>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-white uppercase tracking-wider">Shop</h3>
+          <ul class="mt-4 space-y-2">
+            <li><a href="/category/shoes" class="text-sm hover:text-white transition-colors">Shoes</a></li>
+            <li><a href="/category/hats-caps" class="text-sm hover:text-white transition-colors">Hats</a></li>
+            <li><a href="/category/clothing" class="text-sm hover:text-white transition-colors">Clothing</a></li>
+            <li><a href="/category/accessories" class="text-sm hover:text-white transition-colors">Accessories</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-white uppercase tracking-wider">Help</h3>
+          <ul class="mt-4 space-y-2">
+            <li><a href="/page/about" class="text-sm hover:text-white transition-colors">About Us</a></li>
+            <li><a href="/page/contact" class="text-sm hover:text-white transition-colors">Contact</a></li>
+            <li><a href="/page/shipping-returns" class="text-sm hover:text-white transition-colors">Shipping & Returns</a></li>
+            <li><a href="/blog" class="text-sm hover:text-white transition-colors">Blog</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-white uppercase tracking-wider">Connect</h3>
+          <ul class="mt-4 space-y-2">
+            <li><a href={SITE.social.instagram} class="text-sm hover:text-white transition-colors">Instagram</a></li>
+            <li><a href={SITE.social.pinterest} class="text-sm hover:text-white transition-colors">Pinterest</a></li>
+            <li><a href={SITE.social.facebook} class="text-sm hover:text-white transition-colors">Facebook</a></li>
+          </ul>
+          <p class="mt-4 text-sm text-gray-400">{SITE.email}</p>
+        </div>
+      </div>
+      <div class="mt-8 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
+        <p>&copy; {new Date().getFullYear()} {SITE.name}. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+  
+  <script>
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('mobile-menu-btn')
+    const mobileMenu = document.getElementById('mobile-menu')
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden')
+      })
+    }
+    
+    // Cart count
+    const cartCount = document.getElementById('cart-count')
+    if (cartCount) {
+      try {
+        const cart = JSON.parse(localStorage.getItem('cart') || '{"items":[]}')
+        const count = cart.items.reduce((s, i) => s + i.qty, 0)
+        if (count > 0) {
+          cartCount.textContent = count
+          cartCount.classList.remove('hidden')
+        }
+      } catch(e) {}
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+---
+import Main from '../layouts/Main.astro'
+---
+<Main title="Checkout" description="Complete your order" noindex>
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="font-display text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+    
+    <div id="checkout-form">
+      <div class="text-center py-12">
+        <p class="text-gray-500">Loading checkout...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function initCheckout() {
+      const cart = JSON.parse(sessionStorage.getItem('checkout_cart') || 'null');
+      if (!cart || cart.items.length === 0) {
+        document.getElementById('checkout-form').innerHTML = `
+          <div class="text-center py-20">
+            <p class="text-gray-500 text-lg mb-4">No items to checkout</p>
+            <a href="/category/shoes" class="inline-flex items-center px-6 py-3 bg-gray-900 text-white rounded-full hover:bg-gray-800">Start Shopping</a>
+          </div>
+        `;
+        return;
+      }
+
+      const subtotal = cart.items.reduce((s, i) => s + i.price * i.qty, 0);
+      const shipping = subtotal >= 50 ? 0 : 5.99;
+      const total = subtotal + shipping;
+
+      document.getElementById('checkout-form').innerHTML = `
+        <div class="space-y-6">
+          <!-- Order Summary -->
+          <div class="bg-gray-50 p-6 rounded-xl">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
+            ${cart.items.map(item => `
+              <div class="flex justify-between py-2 text-sm">
+                <span>${item.title} × ${item.qty}</span>
+                <span>$${(item.price * item.qty).toFixed(2)}</span>
+              </div>
+            `).join('')}
+            <div class="border-t border-gray-200 mt-2 pt-2">
+              <div class="flex justify-between text-sm text-gray-600">
+                <span>Shipping</span>
+                <span>${shipping === 0 ? '<span class="text-green-600">Free</span>' : '$5.99'}</span>
+              </div>
+              <div class="flex justify-between font-bold text-lg mt-2">
+                <span>Total</span>
+                <span>$${total.toFixed(2)} USD</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Info -->
+          <div class="bg-white p-6 rounded-xl border border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Contact Information</h2>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input type="email" id="customer-email" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" required placeholder="your@email.com" />
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                  <input type="text" id="customer-first" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" required />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                  <input type="text" id="customer-last" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" required />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Shipping -->
+          <div class="bg-white p-6 rounded-xl border border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Shipping Address</h2>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                <input type="text" id="address" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" required />
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                  <input type="text" id="city" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" required />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">State</label>
+                  <input type="text" id="state" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" />
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">ZIP Code</label>
+                  <input type="text" id="zip" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent" required />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                  <select id="country" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+                    <option value="US">United States</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="CA">Canada</option>
+                    <option value="AU">Australia</option>
+                    <option value="DE">Germany</option>
+                    <option value="FR">France</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment -->
+          <div class="bg-white p-6 rounded-xl border border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Payment Method</h2>
+            <div class="space-y-3">
+              <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-brand-400 has-[:checked]:border-brand-600 has-[:checked]:bg-brand-50">
+                <input type="radio" name="payment" value="stripe" checked class="mr-3" />
+                <div>
+                  <span class="font-medium text-gray-900">Credit Card (Stripe)</span>
+                  <p class="text-xs text-gray-500 mt-0.5">Visa, Mastercard, Amex</p>
+                </div>
+              </label>
+              <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-brand-400 has-[:checked]:border-brand-600 has-[:checked]:bg-brand-50">
+                <input type="radio" name="payment" value="paypal" class="mr-3" />
+                <div>
+                  <span class="font-medium text-gray-900">PayPal</span>
+                  <p class="text-xs text-gray-500 mt-0.5">Fast and secure</p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <button class="w-full py-3 bg-brand-600 text-white font-medium rounded-full hover:bg-brand-700 transition-colors text-lg" onclick="submitOrder()">
+            Pay $${total.toFixed(2)}
+          </button>
+        </div>
+      `;
+    }
+
+    async function submitOrder() {
+      const cart = JSON.parse(sessionStorage.getItem('checkout_cart') || '{}');
+      const email = document.getElementById('customer-email').value;
+      
+      if (!email) {
+        alert('Please enter your email');
+        return;
+      }
+
+      const payment = document.querySelector('input[name="payment"]:checked')?.value;
+      const orderData = {
+        items: cart.items,
+        customer_email: email,
+        customer_name: document.getElementById('customer-first').value + ' ' + document.getElementById('customer-last').value,
+        shipping_address: {
+          line1: document.getElementById('address').value,
+          city: document.getElementById('city').value,
+          state: document.getElementById('state').value,
+          zip: document.getElementById('zip').value,
+          country: document.getElementById('country').value,
+        },
+        subtotal: cart.items.reduce((s, i) => s + i.price * i.qty, 0),
+        total: cart.items.reduce((s, i) => s + i.price * i.qty, 0) + (cart.items.reduce((s, i) => s + i.price * i.qty, 0) >= 50 ? 0 : 5.99),
+        shipping_cost: cart.items.reduce((s, i) => s + i.price * i.qty, 0) >= 50 ? 0 : 5.99,
+        currency: 'USD',
+        success_url: window.location.origin + '/order/success',
+        cancel_url: window.location.origin + '/cart'
+      };
+
+      try {
+        if (payment === 'stripe') {
+          const res = await fetch('/api/checkout/stripe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+          });
+          const data = await res.json();
+          if (data.url) {
+            localStorage.removeItem('cart');
+            window.location.href = data.url;
+          } else {
+            alert('Checkout failed: ' + (data.error || 'Unknown error'));
+          }
+        } else {
+          // PayPal - redirect to PayPal
+          const res = await fetch('/api/checkout/paypal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+          });
+          const data = await res.json();
+          if (data.orderID) {
+            localStorage.removeItem('cart');
+            sessionStorage.setItem('paypal_order_id', data.orderID);
+            window.location.href = `https://www.paypal.com/checkoutnow?token=${data.orderID}`;
+          }
+        }
+      } catch (err) {
+        alert('Checkout error. Please try again.');
+      }
+    }
+
+    initCheckout();
+  </script>
+</Main>

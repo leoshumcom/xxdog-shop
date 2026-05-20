@@ -1,0 +1,54 @@
+---
+import Main from '../layouts/Main.astro'
+import { API_BASE } from '../lib/config'
+
+const { slug } = Astro.params
+let post: any = null
+
+if (slug) {
+  try {
+    const res = await fetch(`${API_BASE}/blog/${slug}`)
+    if (res.ok) post = await res.json()
+  } catch (e) {}
+}
+
+if (!post) {
+  return Astro.redirect('/blog')
+}
+
+const tags = typeof post.tags === 'string' ? JSON.parse(post.tags || '[]') : (post.tags || [])
+---
+<Main title={post.title} description={post.seo_description || post.excerpt || ''} image={post.cover_image}>
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <nav class="flex items-center gap-2 text-sm text-gray-500 mb-8">
+      <a href="/" class="hover:text-brand-600">Home</a>
+      <span>/</span>
+      <a href="/blog" class="hover:text-brand-600">Blog</a>
+      <span>/</span>
+      <span class="text-gray-900 font-medium">{post.title}</span>
+    </nav>
+
+    {post.cover_image && (
+      <img src={post.cover_image} alt={post.title} class="w-full aspect-video object-cover rounded-2xl mb-8" />
+    )}
+
+    <h1 class="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-4">{post.title}</h1>
+    
+    <div class="flex items-center gap-4 text-sm text-gray-500 mb-8">
+      {post.author && <span>By {post.author}</span>}
+      {post.published_at && <span>{new Date(post.published_at).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}</span>}
+    </div>
+
+    <div class="prose prose-gray max-w-none">
+      {post.content?.split('\n\n').map(p => <p class="mb-4 leading-relaxed">{p}</p>)}
+    </div>
+
+    {tags.length > 0 && (
+      <div class="mt-8 pt-8 border-t border-gray-200 flex flex-wrap gap-2">
+        {tags.map((tag: string) => (
+          <a href={`/blog?tag=${tag}`} class="px-3 py-1 bg-gray-100 text-sm text-gray-600 rounded-full hover:bg-gray-200">{tag}</a>
+        ))}
+      </div>
+    )}
+  </article>
+</Main>

@@ -1,0 +1,181 @@
+---
+import Main from '../layouts/Main.astro'
+import { SITE, API_BASE } from '../lib/config'
+
+// 获取 Featured 产品
+let featuredProducts: any[] = []
+try {
+  const res = await fetch(`${API_BASE}/products?featured=true&limit=8`)
+  if (res.ok) {
+    const data = await res.json()
+    featuredProducts = data.items || []
+  }
+} catch (e) {
+  // fallback
+}
+---
+<Main>
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-br from-gray-50 via-white to-brand-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+      <div class="max-w-2xl">
+        <span class="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider bg-brand-100 text-brand-800 rounded-full mb-4">New Collection 2026</span>
+        <h1 class="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight">
+          Style That<br />
+          <span class="text-brand-600">Speaks</span> For You
+        </h1>
+        <p class="mt-6 text-lg md:text-xl text-gray-600 max-w-lg">
+          Premium shoes, hats, clothing and accessories curated for those who demand quality.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a href="/category/shoes" class="inline-flex items-center px-8 py-3 bg-gray-900 text-white font-medium rounded-full hover:bg-gray-800 transition-colors">
+            Shop Now
+            <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          </a>
+          <a href="/category/hats-caps" class="inline-flex items-center px-8 py-3 border-2 border-gray-900 text-gray-900 font-medium rounded-full hover:bg-gray-900 hover:text-white transition-colors">
+            Explore Hats
+          </a>
+        </div>
+        <div class="mt-12 flex items-center gap-8 text-sm text-gray-500">
+          <span>✓ Free Shipping $50+</span>
+          <span>✓ 30-Day Returns</span>
+          <span>✓ Secure Checkout</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section class="py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-gray-900">Shop by Category</h2>
+        <p class="mt-4 text-gray-600">Find your perfect style</p>
+      </div>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <!-- Shoes -->
+        <a href="/category/shoes" class="group relative aspect-square bg-gradient-to-br from-amber-50 to-orange-100 rounded-2xl overflow-hidden">
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="font-display text-2xl md:text-3xl font-bold text-gray-900 group-hover:scale-110 transition-transform">👟</span>
+          </div>
+          <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/30">
+            <h3 class="text-white font-semibold">Shoes</h3>
+          </div>
+        </a>
+        
+        <!-- Hats -->
+        <a href="/category/hats-caps" class="group relative aspect-square bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl overflow-hidden">
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="font-display text-2xl md:text-3xl font-bold text-gray-900 group-hover:scale-110 transition-transform">🧢</span>
+          </div>
+          <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/30">
+            <h3 class="text-white font-semibold">Hats & Caps</h3>
+          </div>
+        </a>
+        
+        <!-- Clothing -->
+        <a href="/category/clothing" class="group relative aspect-square bg-gradient-to-br from-green-50 to-emerald-100 rounded-2xl overflow-hidden">
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="font-display text-2xl md:text-3xl font-bold text-gray-900 group-hover:scale-110 transition-transform">👕</span>
+          </div>
+          <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/30">
+            <h3 class="text-white font-semibold">Clothing</h3>
+          </div>
+        </a>
+        
+        <!-- Accessories -->
+        <a href="/category/accessories" class="group relative aspect-square bg-gradient-to-br from-purple-50 to-pink-100 rounded-2xl overflow-hidden">
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="font-display text-2xl md:text-3xl font-bold text-gray-900 group-hover:scale-110 transition-transform">👜</span>
+          </div>
+          <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/30">
+            <h3 class="text-white font-semibold">Accessories</h3>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Products -->
+  {featuredProducts.length > 0 && (
+  <section class="py-16 md:py-24 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between mb-12">
+        <div>
+          <h2 class="font-display text-3xl md:text-4xl font-bold text-gray-900">Featured Products</h2>
+          <p class="mt-2 text-gray-600">Our most popular picks</p>
+        </div>
+        <a href="/category/shoes" class="hidden sm:inline-flex items-center text-sm font-medium text-brand-600 hover:text-brand-700">
+          View All
+          <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        {featuredProducts.map(product => {
+          const images = typeof product.images === 'string' ? JSON.parse(product.images) : product.images
+          const img = images?.[0] || '/placeholder.svg'
+          return (
+            <a href={`/products/${product.slug}`} class="group">
+              <div class="aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-3">
+                <img src={img} alt={product.title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+              </div>
+              <h3 class="text-sm font-medium text-gray-900 group-hover:text-brand-600 transition-colors">{product.title}</h3>
+              <p class="mt-1 text-sm text-gray-600">${product.price.toFixed(2)} USD</p>
+            </a>
+          )
+        })}
+      </div>
+    </div>
+  </section>
+  )}
+
+  <!-- Features / Trust -->
+  <section class="py-16 border-t border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div>
+          <div class="w-12 h-12 mx-auto mb-3 bg-brand-100 rounded-full flex items-center justify-center">
+            <svg class="w-6 h-6 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+          </div>
+          <h3 class="text-sm font-semibold text-gray-900">Free Shipping</h3>
+          <p class="mt-1 text-xs text-gray-500">On orders over $50</p>
+        </div>
+        <div>
+          <div class="w-12 h-12 mx-auto mb-3 bg-green-100 rounded-full flex items-center justify-center">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <h3 class="text-sm font-semibold text-gray-900">Secure Payments</h3>
+          <p class="mt-1 text-xs text-gray-500">PayPal & Stripe</p>
+        </div>
+        <div>
+          <div class="w-12 h-12 mx-auto mb-3 bg-blue-100 rounded-full flex items-center justify-center">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          </div>
+          <h3 class="text-sm font-semibold text-gray-900">30-Day Returns</h3>
+          <p class="mt-1 text-xs text-gray-500">No questions asked</p>
+        </div>
+        <div>
+          <div class="w-12 h-12 mx-auto mb-3 bg-purple-100 rounded-full flex items-center justify-center">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="text-sm font-semibold text-gray-900">24/7 Support</h3>
+          <p class="mt-1 text-xs text-gray-500">We're here to help</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Newsletter -->
+  <section class="py-16 bg-gray-900 text-white">
+    <div class="max-w-xl mx-auto px-4 text-center">
+      <h2 class="font-display text-2xl md:text-3xl font-bold">Stay in the Loop</h2>
+      <p class="mt-3 text-gray-400">Get exclusive deals and new arrivals first.</p>
+      <form class="mt-6 flex gap-2">
+        <input type="email" placeholder="Enter your email" class="flex-1 px-4 py-3 rounded-full text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+        <button type="submit" class="px-6 py-3 bg-brand-600 text-white font-medium rounded-full hover:bg-brand-700 transition-colors whitespace-nowrap">Subscribe</button>
+      </form>
+    </div>
+  </section>
+</Main>
