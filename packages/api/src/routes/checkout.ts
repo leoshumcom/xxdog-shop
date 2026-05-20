@@ -28,25 +28,27 @@ checkout.post('/stripe', async (c) => {
     quantity: item.qty,
   }))
 
-  // 调用 Stripe API
+  // 构建 form-urlencoded body
+  const params = new URLSearchParams()
+  params.set('mode', 'payment')
+  if (customer_email) params.set('customer_email', customer_email)
+  params.set('success_url', success_url || 'https://xxdog.com/order/success?session_id={CHECKOUT_SESSION_ID}')
+  params.set('cancel_url', cancel_url || 'https://xxdog.com/cart')
+  
+  lineItems.forEach((li: any, i: number) => {
+    params.set(`line_items[${i}][price_data][currency]`, li.price_data.currency)
+    params.set(`line_items[${i}][price_data][product_data][name]`, li.price_data.product_data.name)
+    params.set(`line_items[${i}][price_data][unit_amount]`, String(li.price_data.unit_amount))
+    params.set(`line_items[${i}][quantity]`, String(li.quantity))
+  })
+
   const stripeRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${STRIPE_SECRET_KEY}`,
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: new URLSearchParams({
-      'mode': 'payment',
-      'customer_email': customer_email || '',
-      'success_url': success_url || 'https://xxdog.com/order/success?session_id={CHECKOUT_SESSION_ID}',
-      'cancel_url': cancel_url || 'https://xxdog.com/cart',
-      ...lineItems.map((li: any, i: number) => [
-        [`line_items[${i}][price_data][currency]`, li.price_data.currency],
-        [`line_items[${i}][price_data][product_data][name]`, li.price_data.product_data.name],
-        [`line_items[${i}][price_data][unit_amount]`, String(li.price_data.unit_amount)],
-        [`line_items[${i}][quantity]`, String(li.quantity)],
-      ]).flat().map(([k, v]) => [k, v])
-    ).toString(),
+    body: params.toString(),
   })
 
   const session = await stripeRes.json() as any

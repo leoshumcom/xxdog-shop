@@ -1,0 +1,35 @@
+name: Deploy Frontend to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/frontend/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install & Build
+        run: |
+          cd packages/frontend
+          npm install
+          npx astro build
+        env:
+          ASTRO_TELEMETRY_DISABLED: 1
+
+      - name: Deploy with Wrangler
+        run: |
+          cd packages/frontend
+          npx wrangler pages deploy dist --project-name=xxdog-shop --branch=main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}

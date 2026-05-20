@@ -1,4 +1,3 @@
----
 // API 基础 URL
 export const API_BASE = import.meta.env.DEV ? 'http://localhost:8787/api' : 'https://api.xxdog.com/api'
 
